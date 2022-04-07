@@ -1,11 +1,8 @@
 # predictiveEcologyInAction
 This repository was designed to demonstrate hands-on how different areas of ecology can be connected to answer interesting scientific questions.
 
-#############################################
-#					                                  #
+
 #  Welcome the world of Predictive Ecology  #
-#					                                  #
-#############################################
 
 Here you will find the instructions necessary to navigate the 
 practical part of the course on Predictive Ecology. 
