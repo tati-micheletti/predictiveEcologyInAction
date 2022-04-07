@@ -1,0 +1,215 @@
+---
+title: "Simulating Bird Abundance"
+author: "Tati Micheletti"
+date: "4/6/2022"
+output: pdf_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+## Simulating Bird Abundance  
+
+The present game-exercise intends to give you a hands-on experience on how ecological 
+modelers use data, statistics, and probability to forecast changes in our planet.
+To play the game, you were previously divided in three groups:  
+1. the **Turtle** group  
+2. the **Bird** group, and   
+3. the **Tree** group.  
+
+If you are reading this, you belong to the Bird group, which we will rename 
+to **_Species Abundance Simulation_** group. Fancier, right? :)  
+
+You will be responsible for simulating abundance of birds across the 
+landscape and, ultimately, forecasting how their populations will change through 
+time based on landscape changes.
+
+You have received a small Lego set, which you can use to simulate the the population 
+size of your birds. This Lego set brings the aerial view of your landscape 
+and you can see the animal's habitat.
+
+### Getting started  
+
+Before you start, you will need to install two libraries to help with the simulations. 
+The first library is called `Require`, and is an R package (or library) dedicated 
+to improve code reproducibility on the setup side. The second library we will need 
+is called `data.table`, which improves efficiency of data manipulation.
+
+```{r libraries}
+if (!require("Require")) {install.packages("Require"); require("Require")}
+Require("data.table")
+Require("raster")
+Require("googledrive")
+```
+
+The next thing we will do is to `source` all `functions` that will help us simulate 
+the movement of the turtle. These functions are described in the file `turtleSimulation.R`, 
+which is a typical coding file for the R environment. Functions are the basis for 
+programming. They are generally generic commands to explain to the software what 
+to do. If you are interested, you can read more about:  
+
+**R and functions**, in this great and simple tutorial from Norm Matloff: <https://github.com/matloff/fasteR>  
+and in a cool YouTube video from R Programming <https://www.youtube.com/watch?v=BvKETZ6kr9Q>  
+**data.table and efficient data manipulation** in this tutorial:   <https://www.machinelearningplus.com/data-manipulation/datatable-in-r-complete-guide/>   
+**RMarkdown** and other awesome packages from Yihui Xie here: <https://bookdown.org/yihui/rmarkdown/> and   <https://bookdown.org/yihui/rmarkdown-cookbook/>  
+**RStudio** in a fun and easy way: <https://moderndive.netlify.app/1-getting-started.html>  
+
+The present `birdSimulation.Rmd`, 
+on the other hand, is a mixed-file that allows for both documentation (normal text) and 
+code to be written. When the file is done, this document can be `rendered` into 
+a PDF with a really neat format, which you can also see in the folder, as 
+`birdSimulation.pdf`.
+
+### Functions' Sourcing 
+
+To `source` (or in other words, _read_) the functions we will using, we can use a 
+function in R called `source()` (I agree, not too creative, but easy to remember).
+To run the line below, you can press the little green arrow on the right side of 
+the `code chunck`, where the instructions for R to source the file with functions 
+are written.
+
+```{r sourcing}
+source("birdSimulation.R")
+```
+
+If everything goes according to the plan, you should have seen in the `Console` 
+below this window the following sentence:  
+
+`All functions were correctly sourced! You are ready to start.`
+
+Now the real fun begins! 
+
+### Defining bird abundance
+
+The bird will move randomly across the landscape and depending on the proportion 
+of different habitats, you will count how many birds are in that area. In general, 
+birds like following available habitats, in this order of preference: 
+
+A. Recently burned patch (light yellow)
+B. Young forest (light green)
+C. Human disturbed patch (grey or black)
+D. Middle-aged forest (middle green)
+E. Old forest (dark green) 
+F. Water (light blue)
+
+To define the abundance of birds, we will go through three phases: *finding area*, 
+*defining habitat proportions*, and *counting birds*.
+
+#### Finding Area
+
+The first thing to do is to place the bird in a random area. Try to avoid the exact 
+areas it has been previously.
+
+#### Defining Habitat Proportions
+
+Once you have placed the bird place the Lego square around it, trying your best 
+to keep the bird in the middle. Now you will count the number of patches (Lego 
+heads) of each habitat and take notes of it. All you have to do is count how 
+many of each habitat you have within the square where the bird is. If a given 
+habitat is not inside the square, give it a zero.  
+
+The function below shows you all the habitat types available. Please use the 
+codes provided to record your collected data (i.e., the letters, not habitat 
+description).  
+
+```{r available}
+availableHabitats()
+```
+
+You should repeat this cycle of placing the bird and counting the habitat 
+patches for at least 15 rounds. Once you have compiled all the data, you should 
+enter the results on the table which has already been prepared for you. 
+This table can be found in the `data` folder of the `predictiveEcologyInAction` 
+directory. The table to fill in is called `birdHabitat.csv`. The sheet contains 
+pre-filled habitat type' columns. Just place the number of patches you counted 
+in each habitat per round.  
+
+#### Counting birds
+
+Each row in the Excel file should represent habitat counts for the habitats of each round. 
+Once you have enter the total patches of each habitat for at least 15 rounds on the Excel table, save 
+it (don't change the name or format!), you will read the table and enter the data 
+into a function that will tell you how many birds were observed in each round.  
+
+To load the table, you can use the function below:   
+
+```{r loadTable}
+birdsTable <- loadBirdsTable()
+```
+
+And to calculate the number of observed birds, you can use the function below:
+
+```{r calculateObs}
+calculateObservations(birdsTable)
+```
+
+Now you can complete the table with the observations. To do that, fill the column 
+**counts**, on the table (`G`) with the values presented by the function above 
+and save the table.
+
+>>>
+It is *VERY IMPORTANT* that you do not change the file name or  
+type, as the code was built to read `.csv` files, not normal Excel `.xlsx` files.
+
+### Fitting a bird abundance model
+
+Once you have finished your 15 rounds and filled the table with the observed 
+number of birds using the `calculateObservations(birdsTable)`, you will move to 
+building a model to be able to forecast how many birds are now and will be in the 
+future landscapes. This is a complicated statistical procedure under the hood of 
+a very simple code, as shown below. 
+
+The first step will be to import the table you created in Excel:  
+
+```{r loadFinalTable}
+birdDataset <- fread("data/birdHabitat.csv")
+```
+
+After importing the data, we will then fit a generalized linear model, which uses 
+the Poisson distribution because we are dealing with counts (but don't worry 
+about it too much, this is just information for those who are stats lovers!). As 
+birds are not in the water (habitat `F`), we exclude it from our model:
+
+```{r fitting}
+birdModel <- glm(formula = counts ~ A + B + C + D + E, 
+                   family = "poisson", data = birdDataset)
+birdModel
+```
+
+Once we have our bird model, we will save it and upload the saved object so we 
+can explore it further with the others.
+
+```{r savingTheModel}
+saveAndSendResults(birdModel)
+```
+
+If you never used `googledrive` in R, you will probably have some setup to do. But 
+don't worry! Follow the instructions in the screen and it should work.  
+
+If you see the message: `Results uploaded!`, you have finished the exercise! 
+
+Congratulations! Now you know how many birds you have depending on the proportion 
+of different landscape types. We need, however, to know how the landscape will look like in 
+the future. And then see what the turtle's group has to do with it!  
+
+Once all groups are done, we will integrate all projects and answer our 
+research question. :)
+
+### Playing further on
+
+If you enjoyed the simulations and would like to play further on, just restart the game by:
+1. Deleting the information you entered on the table `birdHabitat.csv` in the 
+`data` folder in the `predictiveEcologyInAction` directory as well as the file 
+`birdResults.rds`;    
+2. Place the bird randomly on the board;  
+3. Re-run the present script from the beginning.
+
+I hope you had some fun, but most of all, could grasp the general mechanisms 
+behind how we model animal abundance in function of landscape.  
+
+
+
+
+
+
