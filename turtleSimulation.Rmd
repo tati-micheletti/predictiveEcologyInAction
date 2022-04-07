@@ -1,0 +1,282 @@
+---
+title: "Simulating Turtle Movements"
+author: "Tati Micheletti"
+date: "4/6/2022"
+output: pdf_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+## Simulating Turtle Movements  
+
+The present game-exercise intends to give you a hands-on experience on how ecological 
+modelers use data, statistics, and probability to forecast changes in our planet.
+To play the game, you were previously divided in three groups:  
+1. the **Turtle** group  
+2. the **Bird** group, and   
+3. the **Tree** group.  
+
+If you are reading this, you belong to the Turtle group, which we will rename 
+to **_Habitat Selection Simulation_** group. Fancier, right? :)  
+
+You will be responsible for simulating movement of an animal species across the 
+landscape and, ultimately, forecasting how their populations will change through 
+time based on landscape changes.
+
+You have received a small Lego set, which you can use to simulate the movements 
+of your turtle population. This Lego set brings the aerial view of your landscape 
+and you can see how the animal moves through different habitats through time.
+
+### Getting started  
+
+Before you start, you will need to install two libraries to help with the simulations. 
+The first library is called `Require`, and is an R package (or library) dedicated 
+to improve code reproducibility on the setup side. The second library we will need 
+is called `data.table`, which improves efficiency of data manipulation.
+
+```{r libraries}
+if (!require("Require")) {install.packages("Require"); require("Require")}
+Require("data.table")
+Require("raster")
+Require("googledrive")
+```
+
+The next thing we will do is to `source` all `functions` that will help us simulate 
+the movement of the turtle. These functions are described in the file `turtleSimulation.R`, 
+which is a typical coding file for the R environment. Functions are the basis for 
+programming. They are generally generic commands to explain to the software what 
+to do. If you are interested, you can read more about:  
+
+**R and functions**, in this great and simple tutorial from Norm Matloff: <https://github.com/matloff/fasteR>  
+and in a cool YouTube video from R Programming <https://www.youtube.com/watch?v=BvKETZ6kr9Q>  
+**data.table and efficient data manipulation** in this tutorial:   <https://www.machinelearningplus.com/data-manipulation/datatable-in-r-complete-guide/>   
+**RMarkdown** and other awesome packages from Yihui Xie here: <https://bookdown.org/yihui/rmarkdown/> and   <https://bookdown.org/yihui/rmarkdown-cookbook/>  
+**RStudio** in a fun and easy way: <https://moderndive.netlify.app/1-getting-started.html>  
+
+The present `turtleSimulation.Rmd`, 
+on the other hand, is a mixed-file that allows for both documentation (normal text) and 
+code to be written. When the file is done, this document can be `rendered` into 
+a PDF with a really neat format, which you can also see in the folder, as 
+`turtleSimulation.pdf`.
+
+### Functions' Sourcing 
+
+To `source` (or in other words, _read_) the functions we will using, we can use a 
+function in R called `source()` (I agree, not too creative, but easy to remember).
+To run the line below, you can press the little green arrow on the right side of 
+the `code chunck`, where the instructions for R to source the file with functions 
+are written.
+
+```{r sourcing}
+source("turtleSimulation.R")
+```
+
+If everything goes according to the plan, you should have seen in the `Console` 
+below this window the following sentence:  
+
+`All functions were correctly sourced! You are ready to start.`
+
+Now the real fun begins! 
+
+### Habitat preferences
+
+The little turtle will move across the landscape based on the probabilities that 
+a habitat is good for it. In general, it will choose the following available habitats, 
+in this order of preference: 
+A. Water (light blue)
+B. Old forest that is near water (dark green) 
+C. Middle-aged forest near water (middle green)
+D. Young forest near water (light green)
+E. Old forest (dark green) 
+F. Middle-aged forest (middle green)
+G. Young forest (light green)
+H. Recently burned patch (light yellow)
+I. Human disturbed patch (grey or black)
+
+The movement is divided in three parts: *direction*, *distance*, and *patch choice*. 
+All three are primarily independent of each other.
+
+#### Direction
+
+The first thing to determine is the direction that the turtle will move. All 
+directions have the same probability of being chosen.
+
+#### Distance
+
+Once you know the direction, you need to determine the steps. The turtle is more 
+likely to travel short distances than long ones.
+
+#### Patch choice
+
+Once the turtle has moved in the determined direction and distance, we need to 
+define exactly where it will land. The choice will depend on the availability of 
+habitat around the **destination patch** it arrived at.
+
+### Simulating Habitat Selection
+
+As explained before, the simulation will happen in three moments, in this order:
+1. Direction
+2. Distance
+3. Patch choice
+
+#### Direction
+
+To know which direction the turtle will travel, you can use the function:
+
+```{r direction}
+simulateDirection()
+```
+
+If the turtle reaches the limits of landscape, just turn back in the exact direction 
+it came from.  
+
+#### Distance
+
+To know how far the turtle will travel, you can use the function:   
+
+```{r distance}
+simulateDistance()
+```
+
+#### Patch choice  
+
+Finally, to know which patch the turtle actually chose to spend the year, you can 
+use the function: `simulatePatchChoice()`. This special function, however, needs 
+inputs from the destination patch the turtle arrived on after travelling. 
+You will need to input the information on the surroundings of the **destination patch**, 
+the patch where the turtle arrived after it determined a direction and the number 
+of movements.  
+
+A list of all habitats available and their respective codes can be seen using the 
+following function:  
+
+```{r available}
+availableHabitats()
+```
+
+To input the information on the surroundings of the **destination patch**, you 
+will need to provide which habitat is available in each direction of the 
+**destination patch** as (this is an example, you will need to fill the arguments 
+yourself based on where the turtle is landing):  
+
+```{r patch}
+simulatePatchChoice(N = "A",
+                    NE = "A",
+                    E = "B",
+                    SE = "A",
+                    S = "A",
+                    SW = "H",
+                    W = "C",
+                    NW = "B")
+```
+
+Note that if a direction is not available (end of board), you just have to repeat 
+the direction where the turtle came from as below:
+
+- If N is not available, use the same as S
+- If NE is not available, use the same as SW
+- If E is not available, use the same as W
+- If SE is not available, use the same as NW
+- If S is not available, use the same as N
+- If SW is not available, use the same as NE
+- If W is not available, use the same as E
+- If NW is not available, use the same as SE
+
+If the turtle lands in a *corner patch*, just simulate a new direction and 
+distance.  
+
+#### Taking notes on each year's habitat chosen
+
+At last, once the turtle has reached its ~~vacation~~ wintering destination you will 
+need to take notes of the habitat type it landed on. To make it easier on you, 
+use the code (capital letters from A to I) provided by the function 
+`availableHabitats()`. 
+
+You will need to do at least 5 rounds of 10 movements. Once you are done with each 
+round, you will need to summarize the total number of times the turtle 
+chose each one of the different types of habitat, and fill in a table (column 
+`totalNumberOfArrivals`), which has already been prepared for you. This table can 
+be found in the `data` folder of the `predictiveEcologyInAction` directory. 
+The table to fill in is called `turtleArrivals.csv`.  
+
+>>>
+It is *VERY IMPORTANT* that you do not change the file name or 
+type, as the code was built to read `.csv` files, not normal Excel `.xlsx` files.
+
+Remember, the more information you collect, the better your model will be -- as 
+in most cases when it comes to science!
+
+### Fitting the Habitat Selection Model
+
+Once you have finished your five rounds of movements (or more, if you are really 
+efficient!), you will move to building a model to be able to forecast where 
+turtles are now and will be in the future landscapes. This is a complicated 
+statistical procedure under the hood of a very simple code, as shown below. 
+The first step will be to import the table you created in Excel:  
+
+```{r loadTable}
+turtleDataset <- fread("data/turtleArrivals.csv")
+```
+
+After importing the data, we will then fit a simple linear model:
+
+```{r fitting}
+turtleModel <- lm(formula = totalNumberOfArrivals ~ habitatType, 
+                 data = turtleDataset)
+```
+
+Once we have our turtle model, we will build a table that will 
+generically predict the habitat selection for the turtle based on the information 
+we collected:  
+
+```{r forecasting}
+forecasts <- round(predict(turtleModel, 
+                     newdata = data.frame(habitatType = c(LETTERS[1:9])),
+                     type = "response"), 0)
+```
+
+And we will put it in a better format so we can better see the values:  
+
+```{r finalTable}
+turtleResults <- data.table(habitatType = c(LETTERS[1:9]), 
+                         habitatPreference = forecasts)
+print(turtleResults)
+```
+
+Once we have our final table, we will save it and upload the saved object so we 
+can explore it further with the others.
+
+```{r savingTheTable}
+saveAndSendResults(turtleResults)
+```
+
+If you never used `googledrive` in R, you will probably have some setup to do. But 
+don't worry! Follow the instructions in the screen and it should work.  
+
+If you see the message: `Results uploaded!`, you have finished the exercise! 
+
+Congratulations! Now you know how likely your turtle will chose different habitats. 
+We need, however, to know how the landscape looks like not and in 
+the future. And then see what the birds' group has to do with it!
+
+Once all groups are done, we will integrate all projects and answer our 
+research question. :)
+
+### Playing further on
+
+If you enjoyed the simulations and would like to play further on, just restart the game by:
+1. Deleting the information on the column `totalNumberOfArrivals` from the file;   
+`turtleArrivals.csv` in the `data` folder in the `predictiveEcologyInAction` directory;    
+2. Place the turtle randomly on the board (avoiding the edges);  
+3. Re-run the present script from the beginning.
+
+I hope you had some fun, but most of all, could grasp the general mechanisms 
+behind how we model animal habitat suitability.  
+
+
+
+
+
+
