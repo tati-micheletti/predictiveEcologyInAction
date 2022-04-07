@@ -68,8 +68,7 @@ in other words
 
 To start, each group will open their respective files, either the .Rmd version in 
 RStudio, or the .pdf version in Adobe. The advantage of using the .Rmd is that you 
-can run the codes directly in RStudio, without the need to copy+paste. The choice is 
-yours, though!  
+can run the codes directly in RStudio, without the need to copy+paste.  
 
 *TREE GROUP:* `landscapeSimulation.Rmd` or `landscapeSimulation.pdf`  
 *BIRD GROUP:* `birdSimulation.Rmd` or `birdSimulation.pdf`  
@@ -82,3 +81,5 @@ work together on the integration of all this work with the file:
 
 
 See you soon!
+
+PS.: If you want to cheat, go ahead and directly run the file `gameTestingScript.R`. You will miss all the explanation, but you will get to the end of the game and answer the question in about 48 seconds. The choice is yours!  
