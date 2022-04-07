@@ -62,7 +62,7 @@ The main objective of this course is to answer the following scientific question
 
 in other words
 
-**Do we have a positive relationship between bird abundance and turtle habitat suitability?**
+**Do we have a positive relationship between bird abundance and turtle habitat suitability now and in the future?**
 
 ## STARTING
 
