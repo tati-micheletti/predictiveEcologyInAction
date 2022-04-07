@@ -71,14 +71,14 @@ RStudio, or the .pdf version in Adobe. The advantage of using the .Rmd is that y
 can run the codes directly in RStudio, without the need to copy+paste. The choice is 
 yours, though!  
 
-TREE GROUP: landscapeSimulation.Rmd or landscapeSimulation.pdf  
-BIRD GROUP: birdSimulation.Rmd or birdSimulation.pdf  
-TURTLE GROUP: turtleSimulation.Rmd or turtleSimulation.pdf  
+_TREE GROUP:_ landscapeSimulation.Rmd or landscapeSimulation.pdf  
+_BIRD GROUP:_ birdSimulation.Rmd or birdSimulation.pdf  
+_TURTLE GROUP:_ turtleSimulation.Rmd or turtleSimulation.pdf  
 
 We will follow the instructions in these files and once all groups are done, we will 
 work together on the integration of all this work with the file:  
 
-INTEGRATION: integratingSimulations.Rmd or integratingSimulations.pdf  
+_INTEGRATION:_ integratingSimulations.Rmd or integratingSimulations.pdf  
 
 
 See you soon!
