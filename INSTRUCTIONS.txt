@@ -1,0 +1,71 @@
+#############################################
+#					    #
+#  Welcome the world of Predictive Ecology  #
+#					    #
+#############################################
+
+Here you will find the instructions necessary to navigate the 
+practical part of the course on Predictive Ecology. 
+
+1. GROUPS
+First, you will need to divide the whole class into 3 groups. 
+These will be known at first as the TREE groups, the BIRDS group 
+and the TURTLE group. Each group will have to bring one (AND ONLY 
+ONE) computer to the course.
+
+2. NEEDED SOFTWARE
+The 3 computers should be preferably Windows based. They will have 
+to have the following installed:
+  2.1. Excel (preferably) or OpenOffice Calc.
+  2.2. R
+  2.3. RStudio (Desktop, not Server)
+
+To install the last two, please use the follownig useful illustrated guide: 
+https://techvidvan.com/tutorials/install-r/#:~:text=Step%20%E2%80%93%201%3A%20Go%20to%20CRAN,the%20latest%20version%20of%20R.
+
+Alternatively, watch this YouTube Video: https://www.youtube.com/watch?v=9-RrkJQQYqY
+with the accompanying link: https://rpubs.com/MohammadShadan/installrrstudio
+
+Or you can even skip all that, and download the software directly here!
+R: https://cran.r-project.org/bin/windows/base/R-4.1.3-win.exe
+RStudio: https://download1.rstudio.org/desktop/windows/RStudio-2022.02.1-461.exe
+Download and click on the .exe and follow instructions. Use all defaults.
+
+3. INSTALL LIBRARIES
+Once you have managed to install the needed software, you should install the 
+libraries we will need for the exercise. It is important to try to do this 
+BEFORE the course. Libraries can take time to download and install and we 
+don't want to waste time doing it during the course.
+
+Once you have installed R, you can open it and run the code between the lines below,
+one at a time.
+==================================================================================
+if (!require("Require")) {install.packages("Require"); require("Require")}
+Require("data.table")
+Require("raster")
+Require("googledrive")
+Require("reproducible")
+Require("ggplot2")
+Require("gridExtra")
+==================================================================================
+
+4. DON'T PANIC
+I know it might be scary at the beginning, especially if something doesn't work. 
+But we will go very slowly with the hands-on exercise, and I will guide you through it. 
+There is no need to panic. Even if you were not successful installing the libraries, 
+the important thing is to try! 
+
+5. OBJECTIVES
+The main objective of this course is to answer the following scientific question 
+(with made up data, of course):
+
+**Are birds good umbrellas for turtles now and in the future?**
+
+in other words
+
+**Do we have a positive relationship between bird abundance and turtle 
+habitat suitability?**
+
+See you soon!
+
+Tati
