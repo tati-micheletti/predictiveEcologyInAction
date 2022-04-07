@@ -40,3 +40,11 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+# Results folder
+results/
+
+# Specific results
+*.rds
+*.tif
+landscapeSimulationThroughTime.csv
+
