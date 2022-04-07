@@ -2,8 +2,10 @@
 .Rhistory
 .Rapp.history
 
-# Session Data files
+# Data files
 .RData
+.rds
+.tif
 
 # User-specific files
 .Ruserdata
@@ -37,3 +39,4 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
