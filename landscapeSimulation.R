@@ -3,10 +3,12 @@
 # This is the file where all functions for the Landscape Simulation group are 
 # defined.
 
+invisible(checkPath("data/", create = TRUE))
+
 getInitialLandscape <- function(){
 
-  landscape <- raster(nrow = 10, ncol = 10, res = 1, 
-                    ext = extent(0, 10, 0, 10))
+  landscape <- rast(nrow = 10, ncol = 10, res = 1, 
+                    ext = c(0, 10, 0, 10))
 colorsInitial <- c(
   rep(2, times = 6), rep(4, times = 2), rep(2, times = 2), # Row 1
   2, rep(1, times = 4), 2, rep(4, times = 2), 2, 3, # Row 2
@@ -19,15 +21,12 @@ colorsInitial <- c(
   rep(4, times = 2), 2, 5, rep(2, times = 2), rep(6, times = 2), rep(2, times = 2), # Row 9
   rep(4, times = 2), 2, rep(5, times = 2), 2, rep(6, times = 2), rep(1, times = 2) # Row 10
 )
+  values(landscape) <- colorsInitial
+landscape <- terra::as.factor(landscape)
+names(landscape) <- "landscape"
 
-landscape <- setValues(x = landscape, values = colorsInitial)
-landscape <- ratify(landscape)
 # setting color to raster
-unique(landscape[]) # Here we see the order of the numbers
-
-col <- c(NA, "darkgreen","forestgreen","yellowgreen",
-         "bisque", "grey30", "deepskyblue") 
-# We need to add the color for 0 (zero) too, therefore NA
+# We need to add the color for 0 (zero) too, therefore white
 
 # Values go from 1 to 6
 # 1 = 30 years old forest
@@ -37,8 +36,14 @@ col <- c(NA, "darkgreen","forestgreen","yellowgreen",
 # 5 = Human disturbance
 # 6 = Water
 
-colortable(landscape) <- col
-raster::plot(landscape)
+coltab(landscape) <- c(NA, "darkgreen","forestgreen","yellowgreen",
+               "bisque", "grey30", "deepskyblue")
+
+levels(landscape) <- data.table(ID = c(1:6),
+                  landscapeClass = c("30_year_old_forest", "20_year_old_forest",
+                                     "10_year_old_forest", "burned_in_the_last_10_years",
+                                     "human_disturbance", "water"))
+plot(landscape)
 return(landscape)
 }
 
@@ -46,8 +51,57 @@ simulateForestGrowth <- function(){
   fl <- "data/landscapeSimulationThroughTime.csv"
   if (!file.exists(fl)){
     # if this file doesn't exist, it means it is the first year of simulations
-    DT <- fread("data/startingDataLandscapeSimulation.csv")
-  } else {
+    # We will create the initial table:
+    DT <- structure(list(Rows = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+                                  2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 3L, 3L, 
+                                  3L, 3L, 3L, 3L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 5L, 5L, 
+                                  5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 
+                                  6L, 6L, 7L, 7L, 7L, 7L, 7L, 7L, 7L, 7L, 7L, 7L, 8L, 8L, 8L, 8L, 
+                                  8L, 8L, 8L, 8L, 8L, 8L, 9L, 9L, 9L, 9L, 9L, 9L, 9L, 9L, 9L, 9L, 
+                                  10L, 10L, 10L, 10L, 10L, 10L, 10L, 10L, 10L, 10L), 
+                         Columns = c("A","B", "C", "D", "E", "F", "G", "H", "I", "J", "A", "B", "C", "D",
+                                     "E", "F", "G", "H", "I", "J", "A", "B", "C", "D", "E", "F", "G",
+                                     "H", "I", "J", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+                                     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "A", "B", "C",
+                                     "D", "E", "F", "G", "H", "I", "J", "A", "B", "C", "D", "E", "F",
+                                     "G", "H", "I", "J", "A", "B", "C", "D", "E", "F", "G", "H", "I",
+                                     "J", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "A", "B",
+                                     "C", "D", "E", "F", "G", "H", "I", "J"), 
+                         TimeStep1 = c("20_year_old_forest", 
+                                       "20_year_old_forest", "20_year_old_forest", "20_year_old_forest",
+                                       "20_year_old_forest", "20_year_old_forest", "burned_in_the_last_10_years",
+                                       "burned_in_the_last_10_years", "20_year_old_forest", "20_year_old_forest",
+                                       "20_year_old_forest", "30_year_old_forest", "30_year_old_forest",
+                                       "30_year_old_forest", "30_year_old_forest", "20_year_old_forest",
+                                       "burned_in_the_last_10_years", "burned_in_the_last_10_years",
+                                       "10_year_old_forest", "10_year_old_forest", "20_year_old_forest",
+                                       "30_year_old_forest", "30_year_old_forest", "30_year_old_forest",
+                                       "30_year_old_forest", "20_year_old_forest", "burned_in_the_last_10_years",
+                                       "burned_in_the_last_10_years", "20_year_old_forest", "10_year_old_forest",
+                                       "20_year_old_forest", "30_year_old_forest", "30_year_old_forest",
+                                       "30_year_old_forest", "30_year_old_forest", "20_year_old_forest",
+                                       "human_disturbance", "human_disturbance", "20_year_old_forest",
+                                       "10_year_old_forest", "20_year_old_forest", "30_year_old_forest",
+                                       "30_year_old_forest", "30_year_old_forest", "30_year_old_forest",
+                                       "20_year_old_forest", "20_year_old_forest", "20_year_old_forest",
+                                       "water", "10_year_old_forest", "human_disturbance", "20_year_old_forest",
+                                       "10_year_old_forest", "10_year_old_forest", "10_year_old_forest",
+                                       "10_year_old_forest", "20_year_old_forest", "water", "water",
+                                       "20_year_old_forest", "human_disturbance", "20_year_old_forest",
+                                       "10_year_old_forest", "10_year_old_forest", "10_year_old_forest",
+                                       "10_year_old_forest", "20_year_old_forest", "water", "water",
+                                       "burned_in_the_last_10_years", "human_disturbance", "20_year_old_forest",
+                                       "10_year_old_forest", "10_year_old_forest", "10_year_old_forest",
+                                       "10_year_old_forest", "water", "water", "20_year_old_forest",
+                                       "20_year_old_forest", "burned_in_the_last_10_years", "burned_in_the_last_10_years",
+                                       "20_year_old_forest", "human_disturbance", "20_year_old_forest",
+                                       "20_year_old_forest", "water", "water", "20_year_old_forest",
+                                       "20_year_old_forest", "burned_in_the_last_10_years", "burned_in_the_last_10_years",
+                                       "20_year_old_forest", "human_disturbance", "human_disturbance",
+                                       "20_year_old_forest", "water", "water", "30_year_old_forest",
+                                       "30_year_old_forest")), row.names = c(NA, -100L), 
+                    class = c("data.table", "data.frame"))
+    } else {
     DT <- fread("data/landscapeSimulationThroughTime.csv")
     # Check how many columns there are and append to it every new year at the
     # end of simulation.
@@ -169,9 +223,10 @@ simulateFire <- function(intensity = 1){
 
 checkChangesInLandscape <- function(){
   fl <- "data/landscapeSimulationThroughTime.csv"
+  
   if (!file.exists(fl)){
     stop(paste0("The file landscapeSimulationThroughTime.csv has been deleted. ",
-                "Please restart the simulations from simulateForestGrowth()."))
+                "Please restart the simulation."))
   } else {
     DT <- fread("data/landscapeSimulationThroughTime.csv")
     # Check how many columns there are and append to it every new year at the
@@ -234,21 +289,36 @@ updateLandscape <- function(landscape, changesDetected){
   setkey(newClass, "Rows", "Columns")
   landscape2 <- landscape
   landscape2[] <- newClass[["code"]]
+  coltab(landscape2) <- c(NA, "darkgreen","forestgreen","yellowgreen",
+                         "bisque", "grey30", "deepskyblue")
+  
+  levels(landscape2) <- data.table(ID = c(1:6),
+                                  landscapeClass = c("30_year_old_forest", "20_year_old_forest",
+                                                     "10_year_old_forest", "burned_in_the_last_10_years",
+                                                     "human_disturbance", "water"))
   plot(landscape2)
   print("Landscape updated!")
   return(landscape2)
 }
 
-saveAndSendResults <- function(landscape){
+saveLandscapeResults <- function(landscape, upload = FALSE){
 
   if (!file.exists("data/landscapeResults.tif")){
     writeRaster(landscape, filename = "data/landscapeResults.tif", 
-                format = "GTiff")
+                filetype = "GTiff")
   }
-  folderID <- "1PLXw-M8qmQe1T0VKtXcvZCaTMaT7l7L6"
-  drive_upload("data/landscapeResults.tif", as_id(folderID))
-print("Results uploaded!")
+  folderID <- "15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA"
+  if (upload) {
+    drive_upload("data/landscapeResults.tif", as_id(folderID))
+    print("Results uploaded!")
+  } else {print("Results saved!")}
    
+}
+
+startOverLandscape <- function(){
+  unlink(x = file.path(getwd(), "data", "landscapeSimulationThroughTime.csv"))
+  unlink(x = file.path(getwd(), "data", "landscapeResults.*"))
+  print("Ready for another round?")
 }
 
 print("All functions were correctly sourced! You are ready to start.") 

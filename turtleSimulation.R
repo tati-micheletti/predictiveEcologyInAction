@@ -3,6 +3,48 @@
 # This is the file where all functions for the Turtle Simulation group are 
 # defined.
 
+invisible(checkPath("data/", create = TRUE))
+
+# Create original table
+ta <- structure(list(round = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+                         2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 
+                         3L, 3L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 
+                         5L, 5L, 5L, 5L), 
+               habitatType = c("A", "B", "C", "D", "E", "F", "G", "H", "I", "A", "B", "C", 
+                               "D", "E", "F", "G", "H", "I", "A", "B", "C", "D", "E", "F", 
+                               "G", "H", "I", "A", "B", "C", "D", "E", "F", "G", "H", "I", 
+                               "A", "B", "C", "D", "E", "F", "G", "H", "I"), 
+               habitatDescription = c("Water", "Old forest that is near water",
+                                      "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                      "Middle-aged forest", "Young forest", "Recently burned patch",
+                                      "Human disturbed patch", "Water", "Old forest that is near water",
+                                      "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                      "Middle-aged forest", "Young forest", "Recently burned patch",
+                                      "Human disturbed patch", "Water", "Old forest that is near water",
+                                      "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                      "Middle-aged forest", "Young forest", "Recently burned patch",
+                                      "Human disturbed patch", "Water", "Old forest that is near water",
+                                      "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                      "Middle-aged forest", "Young forest", "Recently burned patch",
+                                      "Human disturbed patch", "Water", "Old forest that is near water",
+                                      "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                      "Middle-aged forest", "Young forest", "Recently burned patch",
+                                      "Human disturbed patch"), 
+               habitatColor = c("light blue", "dark green", "middle green", "light green", "dark green", "middle green",
+                                "light green", "light yellow", "grey or black", "light blue",
+                                "dark green", "middle green", "light green", "dark green", "middle green",
+                                "light green", "light yellow", "grey or black", "light blue",
+                                "dark green", "middle green", "light green", "dark green", "middle green",
+                                "light green", "light yellow", "grey or black", "light blue",
+                                "dark green", "middle green", "light green", "dark green", "middle green",
+                                "light green", "light yellow", "grey or black", "light blue",
+                                "dark green", "middle green", "light green", "dark green", "middle green",
+                                "light green", "light yellow", "grey or black"), 
+               totalNumberOfArrivals = c(rep(x = 0, times = 45))), 
+          row.names = c(NA, -45L), 
+          class = c("data.table", "data.frame"))
+write.csv(ta, file = file.path(getwd(), "data/turtleArrivals.csv"), row.names = FALSE)
+
 simulateDirection <- function(){
   direction <- sample(c("N", "NE", "E", "SE", "S", "SW", "W", "NW"), 
                       size = 1, replace = FALSE)
@@ -18,7 +60,7 @@ simulateDistance <- function(){
                "arrives at the destination patch."))
 }
 
-availableHabitats <- function(visible = TRUE){
+availableHabitatsTurtles <- function(){
   ah <- structure(list(habitatType = c(
                    "A", "B", "C", "D", "E", "F", 
                    "G", "H", "I"), 
@@ -44,8 +86,6 @@ availableHabitats <- function(visible = TRUE){
                    "grey or black")), 
             row.names = c(NA, -9L), 
             class = c("data.table", "data.frame"))
-  if (visible)
-    print(ah)
   return(ah)
 }
 
@@ -79,14 +119,16 @@ simulatePatchChoice <- function(N,
                  definedPatch, " of the destination patch"))
 }
 
-saveAndSendResults <- function(turtleResults){
+saveTurtleResults <- function(turtleResults, upload = FALSE){
   
   if (!file.exists("data/turtleResults.rds")){
     saveRDS(object = turtleResults, file = "data/turtleResults.rds")
   }
-  folderID <- "1PLXw-M8qmQe1T0VKtXcvZCaTMaT7l7L6"
-  drive_upload("data/turtleResults.rds", as_id(folderID))
-  print("Results uploaded!")
+  folderID <- "15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA"
+  if (upload) {
+    drive_upload("data/turtleResults.rds", as_id(folderID))
+    print("Results uploaded!")
+  } else {print("Results saved!")}
   
 }
 
@@ -131,3 +173,46 @@ generateTurtleDataset <- function(nRounds = 5, nMovements = 10){
   names(arrivals) <- c("habitatType", "totalNumberOfArrivals")
   return(arrivals)
 } 
+
+startOverTurtle <- function(){
+  ta <- structure(list(round = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+                                 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 
+                                 3L, 3L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 
+                                 5L, 5L, 5L, 5L), 
+                       habitatType = c("A", "B", "C", "D", "E", "F", "G", "H", "I", "A", "B", "C", 
+                                       "D", "E", "F", "G", "H", "I", "A", "B", "C", "D", "E", "F", 
+                                       "G", "H", "I", "A", "B", "C", "D", "E", "F", "G", "H", "I", 
+                                       "A", "B", "C", "D", "E", "F", "G", "H", "I"), 
+                       habitatDescription = c("Water", "Old forest that is near water",
+                                              "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                              "Middle-aged forest", "Young forest", "Recently burned patch",
+                                              "Human disturbed patch", "Water", "Old forest that is near water",
+                                              "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                              "Middle-aged forest", "Young forest", "Recently burned patch",
+                                              "Human disturbed patch", "Water", "Old forest that is near water",
+                                              "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                              "Middle-aged forest", "Young forest", "Recently burned patch",
+                                              "Human disturbed patch", "Water", "Old forest that is near water",
+                                              "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                              "Middle-aged forest", "Young forest", "Recently burned patch",
+                                              "Human disturbed patch", "Water", "Old forest that is near water",
+                                              "Middle-aged forest near water", "Young forest near water", "Old forest",
+                                              "Middle-aged forest", "Young forest", "Recently burned patch",
+                                              "Human disturbed patch"), 
+                       habitatColor = c("light blue", "dark green", "middle green", "light green", "dark green", "middle green",
+                                        "light green", "light yellow", "grey or black", "light blue",
+                                        "dark green", "middle green", "light green", "dark green", "middle green",
+                                        "light green", "light yellow", "grey or black", "light blue",
+                                        "dark green", "middle green", "light green", "dark green", "middle green",
+                                        "light green", "light yellow", "grey or black", "light blue",
+                                        "dark green", "middle green", "light green", "dark green", "middle green",
+                                        "light green", "light yellow", "grey or black", "light blue",
+                                        "dark green", "middle green", "light green", "dark green", "middle green",
+                                        "light green", "light yellow", "grey or black"), 
+                       totalNumberOfArrivals = c(rep(x = 0, times = 45))), 
+                  row.names = c(NA, -45L), 
+                  class = c("data.table", "data.frame"))
+  write.csv(ta, file = file.path(getwd(), "data/turtleArrivals.csv"), row.names = FALSE)
+  unlink("data/turtleResults.rds")
+  print("Ready for another round?")
+}

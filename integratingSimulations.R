@@ -3,12 +3,21 @@
 # This is the file where all functions for integrating all the work done by 
 # the three groups are defined.
 
+invisible(checkPath("data/", create = TRUE))
+
 getAllData <- function(){
-  allFls <- data.table(drive_ls(path = as_id("1PLXw-M8qmQe1T0VKtXcvZCaTMaT7l7L6")))
+  allFls <- data.table(drive_ls(path = as_id("15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA")))
   landscape <- prepInputs(url = paste0("https://drive.google.com/file/d/",
                                        allFls[name == "landscapeResults.tif", id]),
                           targetFile = "landscapeResults.tif", 
                           destinationPath = checkPath("results", create = TRUE))
+  coltab(landscape) <- c(NA, "darkgreen","forestgreen","yellowgreen",
+                          "bisque", "grey30", "deepskyblue")
+  
+  levels(landscape) <- data.table(ID = c(1:6),
+                                   landscapeClass = c("30_year_old_forest", "20_year_old_forest",
+                                                      "10_year_old_forest", "burned_in_the_last_10_years",
+                                                      "human_disturbance", "water"))
   birdResults <- prepInputs(url = paste0("https://drive.google.com/file/d/",
                                          allFls[name == "birdResults.rds", id]),
                             targetFile = "birdResults.rds", 
@@ -26,11 +35,11 @@ getAllData <- function(){
 
 generateBirdMaps <- function(initialLandscape, finalLandscape, birdModel){
   birdMaps <-
-    raster::stack(lapply(c("initialLandscape", "finalLandscape"),
+    c(lapply(c("initialLandscape", "finalLandscape"),
                          function(MAP) {
                            lands <- get(MAP)
                            DT <- data.table(
-                             pix = LETTERS[getValues(lands)],
+                             pix = LETTERS[values(lands)],
                              A = 0,
                              B = 0,
                              C = 0,
@@ -42,7 +51,8 @@ generateBirdMaps <- function(initialLandscape, finalLandscape, birdModel){
                              DT[pix == L, eval(L) := 1]
                            DT[, pix := NULL]
                            predIL <- suppressWarnings(predict(birdModel, newdata = DT))
-                           birdMap <- setValues(raster(lands), values = predIL)
+                           birdMap <- rast(lands)
+                           values(birdMap) <- predIL
                            return(birdMap)
                          }))
   names(birdMaps) <- c("Now", "Future")
@@ -50,24 +60,28 @@ generateBirdMaps <- function(initialLandscape, finalLandscape, birdModel){
 }
 
 generateTurtleMaps <- function(initialLandscape, finalLandscape, habitats){
-  turtleMaps <- raster::stack(lapply(c("initialLandscape", "finalLandscape"), 
+  turtleMaps <- c(lapply(c("initialLandscape", "finalLandscape"), 
                                    function(MAP){
                                      lands <- get(MAP)
                                      pixWater <- lapply(1:ncell(lands), 
                                                                   function(CELL){
-                                                                   ad <- adjacent(lands, CELL, 
+                                                                   ad <- na.omit(as.numeric(adjacent(lands, CELL, 
                                                                              directions = 8, 
                                                                              pairs = FALSE, 
-                                                                             include = TRUE)
-                                                                   cellVal <- lands[ad]
-                                                                   if (!6 %in% cellVal)
+                                                                             include = TRUE)))
+                                                                   cellType <- data.table(lands[ad])
+                                                                   cellVal <- cellType[["landscapeClass"]]
+                                                                   if (!"water" %in% cellVal)
                                                                     return(NULL)
-                                                                   valInCell <- lands[CELL]
-                                                                   if (valInCell %in% c(4:6))
-                                                                     return(NULL) else 
-                                                                       return(data.table(cell = CELL,
-                                                                                     oldVal = lands[CELL],
-                                                                                     newVal = lands[CELL]+10))
+                                                                   cellType <- data.table(lands[CELL])
+                                                                   valInCell <- cellType[["landscapeClass"]]
+                                                                   if (valInCell %in% c("burned_in_the_last_10_years",
+                                                                                        "human_disturbance",
+                                                                                        "water"))
+                                                                     return(NULL) else
+                                                                       return(data.table(cell = as.numeric(CELL),
+                                                                                         oldVal = as.numeric(lands[CELL]),
+                                                                                         newVal = as.numeric(lands[CELL])+10))
                                                                   })
                                      pixWater[sapply(pixWater, is.null)] <- NULL
                                      pixWater <- rbindlist(pixWater)
@@ -77,17 +91,31 @@ generateTurtleMaps <- function(initialLandscape, finalLandscape, habitats){
                                                                       habitatType = LETTERS[1:9]), 
                                                       by = "habitatType")
                                      rasVals <- data.table(pixelID = 1:ncell(lands),
-                                                           vals = getValues(lands))
-                                     rasVals <- merge(rasVals, habPref,
-                                                      by.x = "vals", 
+                                                           vals = values(lands))
+                                     rasVals2 <- merge(rasVals, habPref,
+                                                      by.x = "vals.landscapeClass", 
                                                       by.y = "rasValue")
-                                     setkey(rasVals, "pixelID")
-                                     landsF <- setValues(x = raster(lands), 
-                                                         values = rasVals[["habitatPreference"]])
+                                     setkey(rasVals2, "pixelID")
+                                     landsF <- lands
+                                     values(landsF) <- rasVals2[["habitatPreference"]]
                                      return(landsF)
                                    }))
   names(turtleMaps) <- c("Now", "Future")
   return(turtleMaps)
+}
+
+plotMaps <- function(allMaps, 
+                     col = c(NULL, NULL,
+                             heat.colors(6), heat.colors(6),
+                             heat.colors(6), heat.colors(6)),
+                     mapsNames = c("Initial Land", "Final Land", 
+                                   "Initial Birds", "Final Birds", 
+                                   "Initial Turtles", "Final Turtles")){
+  if((nlayers2(allMaps) %% 2) == 0) {
+    plot(allMaps, nr = nlayers2(allMaps)/2, main = mapsNames)
+  } else {
+    print(paste("Only pairs of maps accepted (i.e., even number of maps)"))
+  }
 }
 
 ggplotRegression <- function(fit) {
@@ -105,15 +133,16 @@ ggplotRegression <- function(fit) {
 
 areBirdsGoodUmbrellaForTurtle <- function(birdMaps, turtleMaps){
   corrResults <- lapply(1:2, function(index){
-    DT <- data.table(turtles = getValues(turtleMaps[[index]]),
-                     birds = getValues(birdMaps[[index]]))
+    DT <- data.table(turtles = as.numeric(values(turtleMaps[[index]])),
+                     birds = as.numeric(values(birdMaps[[index]])))
     crResult <- cor(DT[["turtles"]], DT[["birds"]], method = "spearman")
     fit <- lm(turtles ~ birds, data = DT)
     p <- ggplotRegression(fit)
     return(p)
   })
   names(corrResults) <- c("Now", "Future")
- p <- grid.arrange(corrResults[["Now"]], corrResults[["Future"]], nrow = 1)
+ p <- grid.arrange(corrResults[["Now"]], corrResults[["Future"]],
+                   nrow = 1)
   return(p)
 }
 
