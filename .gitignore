@@ -42,9 +42,6 @@ vignettes/*.pdf
 
 # Results folder
 results/
-
-# Specific results
-*.rds
-*.tif
-landscapeSimulationThroughTime.csv
-
+data/
+/data/
+/data/*
