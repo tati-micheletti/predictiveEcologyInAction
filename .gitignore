@@ -43,5 +43,3 @@ vignettes/*.pdf
 # Results folder
 results/
 data/
-/data/
-/data/*
