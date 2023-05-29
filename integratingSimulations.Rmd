@@ -1,7 +1,7 @@
 ---
 title: "Integrating Landscape Change with Birds and Turtles"
 author: "Tati Micheletti"
-date: "4/7/2022"
+date: "23 May 2023"
 output: pdf_document
 ---
 
@@ -9,17 +9,18 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-## Integrating our work  
+# Integrating our work  
 
 If we arrived here, it means we were successful in forecasting landscape changes, 
 simulating turtle habitat suitability and bird abundance! Thank you all for your 
-hard work on it. :)
+hard work on it. :)  
 
 So far, we have only worked with our own groups, so now we will hear a little bit 
-about what other groups did.  
+about what other groups did.    
 
 Now we will see how we can integrate all this work and answer our burning scientific 
-question: are birds good umbrella species for turtles? Of course, we need to remember 
+question: **are birds good umbrella species for turtles?**   
+Of course, we need to remember 
 that this example is completely made up, so none of our conclusions here really 
 apply to the real world. However, once we are finished you will have had a hands-on 
 experience on how we can work collaboratively with predictive ecology and why 
@@ -27,13 +28,24 @@ this knowledge is important in whatever area you work on.
 
 So let's get started!  
 
-As always, our first step is to load the necessary libraries:  
+## 1. Load libraries  
+
+As always, our first step is to load the necessary libraries. We will load a couple 
+more libraries this time, so we can download the files straight from google drive and 
+use some nice plotting tools.
+
+```{r dependencies}
+if (!require("Require")) {install.packages("Require"); require("Require")}
+Require("sf")
+Require("RCurl")
+Require("googledrive")
+```
+
+If the dependencies were installed now (not just loaded), please restart your R session and re-run the script. 
 
 ```{r libraries}
-if (!require("Require")) {install.packages("Require"); require("Require")}
 Require("data.table")
-Require("raster")
-Require("googledrive")
+Require("terra")
 Require("reproducible")
 Require("ggplot2")
 Require("gridExtra")
@@ -45,6 +57,7 @@ all the work done by all three groups:
 ```{r sourcing}
 source("landscapeSimulation.R")
 source("turtleSimulation.R")
+source("birdSimulation.R")
 source("integratingSimulations.R")
 ```
 
@@ -63,9 +76,7 @@ can see the initial landscape, and the landscape after 100 years:
 
 ```{r landscapeResults}
 initialLandscape <- getInitialLandscape()
-finalLandscape <- ratify(allData$landscape)
-plot(initialLandscape)
-plot(finalLandscape)
+finalLandscape <- allData$landscape
 ```
 
 The **_Species Abundance Simulation_** group developed a model to predict bird 
@@ -80,7 +91,7 @@ model to predict habitat suitability for turtles. Their results can be seen here
 in a ranking of the different habitats: 
 
 ```{r turtleResults}
-habitats <- merge(availableHabitats(visible = FALSE), allData$turtleResults)
+habitats <- merge(availableHabitatsTurtles(), allData$turtleResults, by = "habitatType")
 ```
 
 Now we will try to answer our question: are birds good umbrellas for turtles now 
@@ -91,7 +102,6 @@ the future using our generated landscape.
 
 ```{r generateBirdMap}
 birdMaps <- generateBirdMaps(initialLandscape, finalLandscape, birdModel)
-plot(birdMaps, col = heat.colors(6))
 ```
 
 We then map turtle habitat suitability now and in the future also using our generated 
@@ -99,7 +109,14 @@ landscape.
 
 ```{r generateTurtleMap}
 turtleMaps <- generateTurtleMaps(initialLandscape, finalLandscape, habitats)
-plot(turtleMaps, col = heat.colors(6))
+```
+
+And then we look at all the maps we have created so far:  
+
+```{r generateMap}
+plotMaps(allMaps = c(initialLandscape, finalLandscape, 
+                     birdMaps$Now, birdMaps$Future,
+                     turtleMaps$Now, turtleMaps$Future))
 ```
 
 Now, to answer our question, we will do a correlation analysis between the two 

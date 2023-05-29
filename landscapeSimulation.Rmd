@@ -1,14 +1,14 @@
 ---
 title: "Landscape Simulation Exercise"
 author: "Tati Micheletti"
-date: "4/5/2022"
+date: "23 May 2023"
 output: pdf_document
 ---
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-## Simulating Landscape Changes 
+# Simulating Landscape Changes 
 
 The present game-exercise intends to give you a hands-on experience on how ecological 
 modelers use data, statistics, and probability to forecast changes in our planet.
@@ -26,22 +26,25 @@ influencing how the turtles and birds populations will change.
 In the folder you downloaded, you received a spreadsheet named `landscape_simulation.xlsx`. 
 This sheet brings the aerial view of your landscape and you can see how it changes through time.
 
-### Getting started  
+## 1. Getting started  
 
-Before you start, you will need to install two libraries to help with the simulations. 
+Before you start, you will need to install three libraries to help with the simulations, 
+if you haven't done it already. 
 The first library is called `Require`, and is an R package (or library) dedicated 
 to improve code reproducibility on the setup side. The second library we will need 
-is called `data.table`, which improves efficiency of data manipulation.
+is called `data.table`, which improves efficiency of data manipulation. The third is 
+a library to deal with spatial analyses.
 
 ```{r libraries}
 if (!require("Require")) {install.packages("Require"); require("Require")}
 Require("data.table")
-Require("raster")
+Require("terra")
 Require("googledrive")
 ```
 
-The next thing we will do is to `source` all `functions` that will help us simulate 
-the movement of the turtle. These functions are described in the file `turtleSimulation.R`, 
+The next thing we will do is to `source` (or in other words, _read and be aware of it_)  
+all `functions` that will help us simulate the changes in the landscape. 
+These functions are described in the file `landscapeSimulation.R`, 
 which is a typical coding file for the R environment. Functions are the basis for 
 programming. They are generally generic commands to explain to the software what 
 to do. If you are interested, you can read more about:  
@@ -58,9 +61,9 @@ code to be written. When the file is done, this document can be `rendered` into
 a PDF with a really neat format, which you can also see in the folder, as 
 `landscapeSimulation.pdf`.
 
-### Functions' Sourcing 
+## 2. Functions' Sourcing 
 
-To `source` (or in other words, _read_) the functions we will using, we can use a 
+To `source` the functions we will using, we can use a 
 function in R called `source()` (I agree, not too creative, but easy to remember).
 To run the line below, you can press the little green arrow on the right side of 
 the `code chunck`, where the instructions for R to source the file with functions 
@@ -77,7 +80,7 @@ below this window the following sentence:
 
 Now the real fun begins! 
 
-### Possible fates for different landscape types
+## 3. Possible fates for different landscape types
 
 For each 10 year time step, we will simulate the fate of 
 1. Forests
@@ -92,7 +95,7 @@ that brings in considerably more complexity. But one thing at a time.
 First, we will discuss how each element can be changed. Then, we will start 
 changing them. 
 
-#### Forests  
+### 3.1. Forests  
 
 There are two important things about forests in our game that you need to 
 remember:  
@@ -105,7 +108,7 @@ replaced by human development, they will grow. A forest that is 10 years old tod
 will be 20 years old in 10 years, the time step we are using for our landscape 
 simulations.
 
-#### Human disturbance  
+### 3.2. Human disturbance  
 
 There is only one level of human disturbance, which can be grey or black. 
 The size of new developments will always be 1. Human disturbance can only 
@@ -114,7 +117,7 @@ burned area, followed by a *young forest*, *middle-aged forest* and only then
 by *older forest* (in our game, everyone understand and respect the importance 
 of forests!).
 
-### Simulating landscape changes  
+## 4. Simulating landscape changes  
 
 First of all, we will create a landscape where the changes will happen:  
 
@@ -135,7 +138,7 @@ Once we have our landscape, we will have changes happening in the following orde
 2. Human development
 3. Fire
 
-#### Forest growth  
+### 4.1. Forest growth  
 
 To know how forest grew during the decade, you can use the function:  
 
@@ -143,7 +146,7 @@ To know how forest grew during the decade, you can use the function:
 simulateForestGrowth()
 ```
 
-#### Human development  
+### 4.2. Human development  
 
 To know which cells became disturbed by human actions during the decade, you can use the function:  
 
@@ -151,7 +154,7 @@ To know which cells became disturbed by human actions during the decade, you can
 simulateHumanDisturbance()
 ```
 
-#### Fire  
+### 4.3. Fire  
 
 To know which cells burned during the decade, you can use the function:  
 
@@ -159,15 +162,16 @@ To know which cells burned during the decade, you can use the function:
 simulateFire()
 ```
 
-#### Checking changes to landscape  
+## 5. Checking changes to landscape  
 
 We will then check which cells changed and follow the changes in landscape.  
 
 ```{r changes}
 changes <- checkChangesInLandscape()
+changes
 ```
 
-#### Implementing changes to landscape  
+## 6. Implementing changes to landscape  
 
 At last, we will add our changes to the original landscape created here and 
 observe how the landscape changed. In other words, we will update our landscape 
@@ -179,31 +183,32 @@ landscape <- updateLandscape(landscape, changes)
 
 Congratulations! Now you reached the end of the second time step of the simulation 
 (the first step is considered the initial conditions). You can now keep simulating 
-forest growth, human disturbance and fire until you reach 10 time steps.  
+forest growth, human disturbance and fire (i.e., steps 4.1 to 4.3, 5 and 6) until you reach 10 time steps.  
 
 Once you finished all simulations, our last step is to save the landscape map 
 and the send it to me. We will do that with the code below:  
 
 ```{r saving}
-saveAndSendResults(landscape)
+saveLandscapeResults(landscape)
 ```
 
-If you never used `googledrive` in R, you will probably have some setup to do. But 
-don't worry! Follow the instructions in the screen and it should work.  
-
-If you see the message: `Results uploaded!`, you have finished the exercise! 
+If you see the message: `Results saved!`, you just have to upload the files `data/landscapeResults.tif` and `data/landscapeResults.tif.aux.xml` to the exercise google folder (`https://drive.google.com/drive/folders/15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA`) and 
+you have finished the exercise!  
 
 Once all groups are done, we will integrate all projects and answer our 
 research question. :)
 
-### Playing further on  
+## 7. Playing further on  
 
 If you enjoyed the simulations and would like to see how playing with the probabilities 
-of human disturbance and fire would change your landscape, you can restart the game by:
-1. Deleting both files `landscapeSimulationThroughTime.csv` and `landscapeResults.tif` 
-from the `data` folder in the 
-`predictiveEcologyInAction` directory. 
-2. Re-running the code contained in this `.Rmd` file while modifying the functions for 
+of human disturbance and fire would change your landscape, you can restart the game by running the 
+following function:
+
+```{r dover} 
+startOverLandscape()
+```
+
+You can now re-run the code contained in this `.Rmd` file while modifying the functions for 
 simulation of human disturbance and fire disturbance as such: 
 `simulateHumanDisturbance(intensity = newLevel)`  
 `simulateFire(intensity = newLevel)`
