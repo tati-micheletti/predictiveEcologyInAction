@@ -1,29 +1,41 @@
 # Quick script sourcing
 
-# LANDSCAPE
+# ALL LIBRARIES
+# Dependencies
 if (!require("Require")) {install.packages("Require"); require("Require")}
-Require("data.table")
-Require("raster")
+Require("sf")
+Require("RCurl")
 Require("googledrive")
+
+# Libraries
+Require("data.table")
+Require("terra")
+Require("reproducible")
+Require("ggplot2")
+Require("gridExtra")
+Require("googledrive")
+
+# Source all functions
 source("landscapeSimulation.R")
+source("turtleSimulation.R")
+source("birdSimulation.R")
+source("integratingSimulations.R")
+
+# LANDSCAPE
 landscape <- getInitialLandscape()
-for (round in 1:10){
+for (round in 2:10){
   print(paste0("Round ", round))
+  Sys.sleep(1)
   simulateForestGrowth()
   simulateHumanDisturbance()
   simulateFire()
   changes <- checkChangesInLandscape()
   landscape <- updateLandscape(landscape, changes)
 }
-saveAndSendResults(landscape)
+saveLandscapeResults(landscape, upload = TRUE)
 
 # BIRDS
-if (!require("Require")) {install.packages("Require"); require("Require")}
-Require("data.table")
-Require("raster")
-Require("googledrive")
-source("birdSimulation.R")
-availableHabitats()
+availableHabitatsBirds()
 # birdsTable <- loadBirdsTable()
 birdsTable <- generateBirdsTable() # Instead of the loadBirdsTable() manually made
 bt <- calculateObservations(birdsTable)
@@ -32,14 +44,9 @@ birdDataset <- cbind(data.table(birdsTable),
                      counts = bt[["counts"]]) # instead of "data/birdHabitat.csv" manually filled
 birdModel <- glm(formula = counts ~ A + B + C + D + E, 
                  family = "poisson", data = birdDataset)
-saveAndSendResults(birdModel)
+saveBirdResults(birdModel, upload = TRUE)
 
 # TURTLE
-if (!require("Require")) {install.packages("Require"); require("Require")}
-Require("data.table")
-Require("raster")
-Require("googledrive")
-source("turtleSimulation.R")
 # simulateDirection() # Not needed to test
 # simulateDistance() # Not needed to test
 # availableHabitats() # Not needed to test
@@ -60,30 +67,17 @@ forecasts <- round(predict(turtleModel,
                            type = "response"), 0)
 turtleResults <- data.table(habitatType = c(LETTERS[1:9]), 
                             habitatPreference = forecasts)
-saveAndSendResults(turtleResults)
+saveTurtleResults(turtleResults, upload = TRUE)
 
 # INTEGRATING
-if (!require("Require")) {install.packages("Require"); require("Require")}
-Require("data.table")
-Require("raster")
-Require("googledrive")
-Require("reproducible")
-Require("ggplot2")
-Require("gridExtra")
-source("landscapeSimulation.R")
-source("turtleSimulation.R")
-source("integratingSimulations.R")
 allData <- getAllData()
 initialLandscape <- getInitialLandscape()
-finalLandscape <- ratify(allData$landscape)
-plot(initialLandscape)
-plot(finalLandscape)
+finalLandscape <- allData$landscape
 birdModel <- allData$birdResults
-habitats <- merge(availableHabitats(visible = FALSE), allData$turtleResults)
+habitats <- merge(availableHabitatsTurtles(), allData$turtleResults, by = "habitatType")
 birdMaps <- generateBirdMaps(initialLandscape, finalLandscape, birdModel)
-plot(birdMaps, col = heat.colors(6))
 turtleMaps <- generateTurtleMaps(initialLandscape, finalLandscape, habitats)
-plot(turtleMaps, col = heat.colors(6))
+plotMaps(allMaps = c(initialLandscape, finalLandscape, 
+                     birdMaps$Now, birdMaps$Future,
+                     turtleMaps$Now, turtleMaps$Future))
 answerToOurQuestion <- areBirdsGoodUmbrellaForTurtle(birdMaps, turtleMaps)
-
-
