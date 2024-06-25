@@ -80,10 +80,14 @@ saveBirdResults <- function(birdModel, upload = FALSE){
   if (!file.exists("data/birdResults.rds")){
     saveRDS(object = birdModel, file = "data/birdResults.rds")
   }
-  folderID <- "15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA"
+  folderID <- "1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi"
   if (upload) {
-    drive_upload("data/birdResults.rds", as_id(folderID))
-    print("Results uploaded!")
+    tryCatch(expr = {
+      drive_upload("data/birdResults.rds", as_id(folderID))
+      print("Results uploaded!")
+    }, error = function(e){
+      print(paste0("Upload failed. Results saved as: ", file.path(getwd(), "data/birdResults.rds")))
+    })
   } else {print("Results saved!")}
   
 }

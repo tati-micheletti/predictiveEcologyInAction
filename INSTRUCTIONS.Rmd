@@ -1,7 +1,7 @@
 ---
 title: "Welcome the world of Predictive Ecology"
 author: "Tati Micheletti"
-date: "23 May 2023"
+date: "24 June 2024"
 output: pdf_document
 ---
 
@@ -25,7 +25,8 @@ For the first part of the course, I would like you to divide the group in two, a
 
 Please take notes on what you find most important about the papers and we will discuss it in class.  
 
-Now will find the instructions necessary to navigate the 
+
+Now you will find the instructions necessary to navigate the 
 practical part of the course on Predictive Ecology. 
 
 ## 2. GROUPS  

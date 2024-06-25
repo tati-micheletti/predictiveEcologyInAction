@@ -6,27 +6,28 @@
 invisible(checkPath("data/", create = TRUE))
 
 getAllData <- function(){
-  allFls <- data.table(drive_ls(path = as_id("15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA")))
+  allFls <- data.table(drive_ls(path = as_id("1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi")))
   landscape <- prepInputs(url = paste0("https://drive.google.com/file/d/",
                                        allFls[name == "landscapeResults.tif", id]),
                           targetFile = "landscapeResults.tif", 
-                          destinationPath = checkPath("results", create = TRUE))
-  coltab(landscape) <- c(NA, "darkgreen","forestgreen","yellowgreen",
-                          "bisque", "grey30", "deepskyblue")
+                          destinationPath = checkPath(file.path(getwd(), "results"), create = TRUE))
+  coltab(landscape) <- data.frame(value = 1:6, 
+                                  col = c("darkgreen","forestgreen","yellowgreen",
+                                          "bisque", "grey30", "deepskyblue"))
   
   levels(landscape) <- data.table(ID = c(1:6),
-                                   landscapeClass = c("30_year_old_forest", "20_year_old_forest",
-                                                      "10_year_old_forest", "burned_in_the_last_10_years",
-                                                      "human_disturbance", "water"))
+                                  landscapeClass = c("30_year_old_forest", "20_year_old_forest",
+                                                     "10_year_old_forest", "burned_in_the_last_10_years",
+                                                     "human_disturbance", "water"))
   birdResults <- prepInputs(url = paste0("https://drive.google.com/file/d/",
                                          allFls[name == "birdResults.rds", id]),
                             targetFile = "birdResults.rds", 
-                            destinationPath = checkPath("results", create = TRUE),
+                            destinationPath = checkPath(file.path(getwd(), "results"), create = TRUE),
                             fun = "readRDS")
   turtleResults <- prepInputs(url = paste0("https://drive.google.com/file/d/",
                                          allFls[name == "turtleResults.rds", id]),
                             targetFile = "turtleResults.rds", 
-                            destinationPath = checkPath("results", create = TRUE),
+                            destinationPath = checkPath(file.path(getwd(), "results"), create = TRUE),
                             fun = "readRDS")
   return(list(landscape = landscape,
               birdResults = birdResults,

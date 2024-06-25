@@ -6,7 +6,7 @@
 invisible(checkPath("data/", create = TRUE))
 
 getInitialLandscape <- function(){
-
+  
   landscape <- rast(nrow = 10, ncol = 10, res = 1, 
                     ext = c(0, 10, 0, 10))
 colorsInitial <- c(
@@ -26,7 +26,6 @@ landscape <- terra::as.factor(landscape)
 names(landscape) <- "landscape"
 
 # setting color to raster
-# We need to add the color for 0 (zero) too, therefore white
 
 # Values go from 1 to 6
 # 1 = 30 years old forest
@@ -36,8 +35,9 @@ names(landscape) <- "landscape"
 # 5 = Human disturbance
 # 6 = Water
 
-coltab(landscape) <- c(NA, "darkgreen","forestgreen","yellowgreen",
-               "bisque", "grey30", "deepskyblue")
+coltab(landscape) <- data.frame(value = 1:6, 
+                                col = c("darkgreen","forestgreen","yellowgreen",
+                                        "bisque", "grey30", "deepskyblue"))
 
 levels(landscape) <- data.table(ID = c(1:6),
                   landscapeClass = c("30_year_old_forest", "20_year_old_forest",
@@ -289,9 +289,9 @@ updateLandscape <- function(landscape, changesDetected){
   setkey(newClass, "Rows", "Columns")
   landscape2 <- landscape
   landscape2[] <- newClass[["code"]]
-  coltab(landscape2) <- c(NA, "darkgreen","forestgreen","yellowgreen",
-                         "bisque", "grey30", "deepskyblue")
-  
+  coltab(landscape2) <- data.frame(value = 1:6,
+                                  col = c("darkgreen","forestgreen","yellowgreen",
+                                          "bisque", "grey30", "deepskyblue"))
   levels(landscape2) <- data.table(ID = c(1:6),
                                   landscapeClass = c("30_year_old_forest", "20_year_old_forest",
                                                      "10_year_old_forest", "burned_in_the_last_10_years",
@@ -307,10 +307,14 @@ saveLandscapeResults <- function(landscape, upload = FALSE){
     writeRaster(landscape, filename = "data/landscapeResults.tif", 
                 filetype = "GTiff")
   }
-  folderID <- "15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA"
+  folderID <- "1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi"
   if (upload) {
-    drive_upload("data/landscapeResults.tif", as_id(folderID))
-    print("Results uploaded!")
+    tryCatch(expr = {
+      drive_upload("data/landscapeResults.tif", as_id(folderID))
+      print("Results uploaded!")
+      }, error = function(e){
+               print(paste0("Upload failed. Results saved as: ", file.path(getwd(), "data/landscapeResults.tif")))
+             })
   } else {print("Results saved!")}
    
 }

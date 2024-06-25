@@ -124,10 +124,14 @@ saveTurtleResults <- function(turtleResults, upload = FALSE){
   if (!file.exists("data/turtleResults.rds")){
     saveRDS(object = turtleResults, file = "data/turtleResults.rds")
   }
-  folderID <- "15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA"
+  folderID <- "1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi"
   if (upload) {
-    drive_upload("data/turtleResults.rds", as_id(folderID))
-    print("Results uploaded!")
+    tryCatch(expr = {
+      drive_upload("data/turtleResults.rds", as_id(folderID))
+      print("Results uploaded!")
+    }, error = function(e){
+      print(paste0("Upload failed. Results saved as: ", file.path(getwd(), "data/turtleResults.rds")))
+    })
   } else {print("Results saved!")}
   
 }
