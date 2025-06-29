@@ -1,7 +1,7 @@
 ---
 title: "Welcome the world of Predictive Ecology"
 author: "Tati Micheletti"
-date: "24 June 2024"
+date: "29 June 2025"
 output: pdf_document
 ---
 
@@ -32,7 +32,7 @@ practical part of the course on Predictive Ecology.
 ## 2. GROUPS  
 
 First, you will need to divide the whole class into 3 groups. 
-These will be known at first as the TREE groups, the BIRDS group 
+These will be known at first as the TREE group, the BIRDS group 
 and the TURTLE group. Each group will have to bring one (AND ONLY 
 ONE) computer to the course.  
 
@@ -44,15 +44,15 @@ to have the following installed:
   2.2. R
   2.3. RStudio (Desktop, not Server)  
 
-To install the last two, please use the follownig useful illustrated guide: 
+To install the last two, please use the following useful illustrated guide: 
 https://techvidvan.com/tutorials/install-r/#:~:text=Step%20%E2%80%93%201%3A%20Go%20to%20CRAN,the%20latest%20version%20of%20R.
 
 Alternatively, watch this YouTube Video: https://www.youtube.com/watch?v=9-RrkJQQYqY
 with the accompanying link: https://rpubs.com/MohammadShadan/installrrstudio  
 
 Or you can even skip all that, and download the software directly here!  
-R: https://cran.r-project.org/bin/windows/base/R-4.1.3-win.exe  
-RStudio: https://download1.rstudio.org/desktop/windows/RStudio-2022.02.1-461.exe  
+R: https://cran.r-project.org/bin/windows/base/R-4.5.1-win.exe
+RStudio: https://download1.rstudio.org/electron/windows/RStudio-2025.05.1-513.exe  
 Download and click on the .exe and follow instructions. Use all defaults.  
 
 ## 4. INSTALL LIBRARIES  
@@ -70,8 +70,6 @@ one at a time.
 ```{r install}
 if (!require("Require")) {install.packages("Require"); require("Require")}
 Require::Require("sf")
-Require::Require("googledrive")
-Require::Require("RCurl")
 Require::Require("data.table")
 Require::Require("terra")
 Require::Require("reproducible")

@@ -1,7 +1,7 @@
 ---
 title: "Simulating Turtle Movements"
 author: "Tati Micheletti"
-date: "23 May 2023"
+date: "29 June 2025"
 output: pdf_document
 ---
 
@@ -40,7 +40,6 @@ is called `data.table`, which improves efficiency of data manipulation.
 ```{r libraries}
 if (!require("Require")) {install.packages("Require"); require("Require")}
 Require("data.table")
-Require("googledrive")
 ```
 
 The next thing we will do is to `source` (or in other words, _read and be aware of it_) 
@@ -159,12 +158,12 @@ availableHabitatsTurtles()
 
 To input the information on the surroundings of the **destination patch**, you 
 will need to provide which habitat is available in each direction of the 
-**destination patch** as:  
+**destination patch** as (for example!):  
 
 ```{r patch}
-simulatePatchChoice(N = "A",
-                    NE = "A",
-                    E = "B",
+simulatePatchChoice(N = "F",
+                    NE = "F",
+                    E = "C",
                     SE = "A",
                     S = "A",
                     SW = "H",
@@ -197,9 +196,9 @@ distance.
 At last, once the turtle has reached its ~~vacation~~ wintering destination you will 
 need to take notes of the habitat type it landed on. To make it easier on you, 
 use the code (capital letters from A to I) provided by the function 
-`availableHabitats()`.  
+`availableHabitatsTurtles()`.  
 
-You will need to do at least 5 rounds of 10 movements (i.e., for each round, simulate the patch 
+You will need to do at least 5 rounds of 10 movements (i.e., for each of the 5 rounds, simulate the patch 
 choice 10 times). 
 Once you are done with each round, you will need to summarize the total number of times the turtle 
 chose each one of the different types of habitat, and fill in a table (column 
@@ -253,19 +252,18 @@ turtleResults <- data.table(habitatType = c(LETTERS[1:9]),
 print(turtleResults)
 ```
 
-Once we have our final table, we will save it and upload the saved object so we 
+Once we have our final table, we will save it and bring the saved object to me, so we 
 can explore it further with the others.
 
 ```{r savingTheTable}
 saveTurtleResults(turtleResults)
 ```
 
-If you see the message: `Results saved!`, you just have to upload the file `data/turtleResults.rds` 
-to the exercise google folder (`https://drive.google.com/drive/folders/15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA`) and 
+If you see the message: `Results saved!`, you just have to bring me the file `data/turtleResults.rds`, or upload it to the exercise google folder (`https://drive.google.com/drive/folders/1X5vCgxLnoRwXDRWEsyHZ4ip-CO18KjBx`) and 
 you have finished the exercise!  
 
 Congratulations! Now you know how likely your turtle will chose different habitats. 
-We need, however, to know how the landscape looks like not and in 
+We need, however, to know how the landscape looks like now and in 
 the future. And then see what the birds' group has to do with it!
 
 Once all groups are done, we will integrate all projects and answer our 

@@ -119,15 +119,15 @@ simulatePatchChoice <- function(N,
                  definedPatch, " of the destination patch"))
 }
 
-saveTurtleResults <- function(turtleResults, upload = FALSE){
+saveTurtleResults <- function(turtleResults, upload = NULL){
   
   if (!file.exists("data/turtleResults.rds")){
     saveRDS(object = turtleResults, file = "data/turtleResults.rds")
   }
-  folderID <- "1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi"
-  if (upload) {
+
+  if (!is.null(upload)) {
     tryCatch(expr = {
-      drive_upload("data/turtleResults.rds", as_id(folderID))
+      drive_upload("data/turtleResults.rds", as_id(upload))
       print("Results uploaded!")
     }, error = function(e){
       print(paste0("Upload failed. Results saved as: ", file.path(getwd(), "data/turtleResults.rds")))

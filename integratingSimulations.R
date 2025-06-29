@@ -5,8 +5,11 @@
 
 invisible(checkPath("data/", create = TRUE))
 
-getAllData <- function(){
-  allFls <- data.table(drive_ls(path = as_id("1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi")))
+getAllData <- function(googleFolder = NULL){
+  if (is.null(googleFolder)){
+    googleFolder <- "1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi"
+  } 
+  allFls <- data.table(drive_ls(path = as_id(googleFolder)))
   landscape <- prepInputs(url = paste0("https://drive.google.com/file/d/",
                                        allFls[name == "landscapeResults.tif", id]),
                           targetFile = "landscapeResults.tif", 
@@ -138,7 +141,7 @@ areBirdsGoodUmbrellaForTurtle <- function(birdMaps, turtleMaps){
                      birds = as.numeric(values(birdMaps[[index]])))
     crResult <- cor(DT[["turtles"]], DT[["birds"]], method = "spearman")
     fit <- lm(turtles ~ birds, data = DT)
-    p <- ggplotRegression(fit)
+    p <- suppressWarnings(ggplotRegression(fit))
     return(p)
   })
   names(corrResults) <- c("Now", "Future")

@@ -301,16 +301,15 @@ updateLandscape <- function(landscape, changesDetected){
   return(landscape2)
 }
 
-saveLandscapeResults <- function(landscape, upload = FALSE){
+saveLandscapeResults <- function(landscape, upload = NULL){
 
   if (!file.exists("data/landscapeResults.tif")){
     writeRaster(landscape, filename = "data/landscapeResults.tif", 
                 filetype = "GTiff")
   }
-  folderID <- "1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi"
-  if (upload) {
+  if (!is.null(upload)) {
     tryCatch(expr = {
-      drive_upload("data/landscapeResults.tif", as_id(folderID))
+      drive_upload("data/landscapeResults.tif", as_id(upload))
       print("Results uploaded!")
       }, error = function(e){
                print(paste0("Upload failed. Results saved as: ", file.path(getwd(), "data/landscapeResults.tif")))

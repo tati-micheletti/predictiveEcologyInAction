@@ -1,7 +1,7 @@
 ---
 title: "Simulating Bird Abundance"
 author: "Tati Micheletti"
-date: "23 May 2023"
+date: "29 June 2025"
 output: pdf_document
 ---
 
@@ -40,7 +40,6 @@ is called `data.table`, which improves efficiency of data manipulation.
 ```{r libraries}
 if (!require("Require")) {install.packages("Require"); require("Require")}
 Require("data.table")
-Require("googledrive")
 ```
 
 The next thing we will do is to `source` (or in other words, _read and be aware of it_) 
@@ -180,7 +179,7 @@ birdModel <- glm(formula = counts ~ A + B + C + D + E,
 
 And calling the object we created shows you the results of model:  
 
-```{r fitting}
+```{r summary}
 summary(birdModel)
 ```
 
@@ -191,8 +190,8 @@ can explore it further with the others.
 saveBirdResults(birdModel)
 ```
 
-If you see the message: `Results saved!`, you just have to upload the file `data/birdResults.rds` 
-to the exercise google folder (`https://drive.google.com/drive/folders/15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA`) and 
+If you see the message: `Results saved!`, you just have to bring me the file `data/birdResults.rds` 
+or uload it to the exercise google folder (`https://drive.google.com/drive/folders/1X5vCgxLnoRwXDRWEsyHZ4ip-CO18KjBx`) and 
 you have finished the exercise!   
 
 Congratulations! Now you know how many birds you have depending on the proportion 

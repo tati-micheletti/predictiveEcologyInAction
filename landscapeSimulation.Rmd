@@ -1,7 +1,7 @@
 ---
 title: "Landscape Simulation Exercise"
 author: "Tati Micheletti"
-date: "23 May 2023"
+date: "29 June 2025"
 output: pdf_document
 ---
 ```{r setup, include = FALSE}
@@ -39,7 +39,6 @@ a library to deal with spatial analyses.
 if (!require("Require")) {install.packages("Require"); require("Require")}
 Require("data.table")
 Require("terra")
-Require("googledrive")
 ```
 
 The next thing we will do is to `source` (or in other words, _read and be aware of it_)  
@@ -192,7 +191,7 @@ and the send it to me. We will do that with the code below:
 saveLandscapeResults(landscape)
 ```
 
-If you see the message: `Results saved!`, you just have to upload the files `data/landscapeResults.tif` and `data/landscapeResults.tif.aux.xml` to the exercise google folder (`https://drive.google.com/drive/folders/15QOytBmeU-8BBXhfclkIFa-wYBIfUoSA`) and 
+If you see the message: `Results saved!`, you just have to bring me the files `data/landscapeResults.tif` and `data/landscapeResults.tif.aux.xml` or upload them to the exercise google folder (`https://drive.google.com/drive/folders/1X5vCgxLnoRwXDRWEsyHZ4ip-CO18KjBx`) and 
 you have finished the exercise!  
 
 Once all groups are done, we will integrate all projects and answer our 

@@ -1,5 +1,8 @@
 # Quick script sourcing
 
+# Google folder: 
+ggfold <- "1X5vCgxLnoRwXDRWEsyHZ4ip-CO18KjBx"
+
 # ALL LIBRARIES
 # Dependencies
 if (!require("Require")) {install.packages("Require"); require("Require")}
@@ -32,7 +35,7 @@ for (round in 2:10){
   changes <- checkChangesInLandscape()
   landscape <- updateLandscape(landscape, changes)
 }
-saveLandscapeResults(landscape, upload = TRUE)
+saveLandscapeResults(landscape, upload = ggfold)
 
 # BIRDS
 availableHabitatsBirds()
@@ -44,7 +47,7 @@ birdDataset <- cbind(data.table(birdsTable),
                      counts = bt[["counts"]]) # instead of "data/birdHabitat.csv" manually filled
 birdModel <- glm(formula = counts ~ A + B + C + D + E, 
                  family = "poisson", data = birdDataset)
-saveBirdResults(birdModel, upload = TRUE)
+saveBirdResults(birdModel, upload = ggfold)
 
 # TURTLE
 # simulateDirection() # Not needed to test
@@ -67,10 +70,10 @@ forecasts <- round(predict(turtleModel,
                            type = "response"), 0)
 turtleResults <- data.table(habitatType = c(LETTERS[1:9]), 
                             habitatPreference = forecasts)
-saveTurtleResults(turtleResults, upload = TRUE)
+saveTurtleResults(turtleResults, upload = ggfold)
 
 # INTEGRATING
-allData <- getAllData()
+allData <- getAllData(googleFolder = ggfold)
 initialLandscape <- getInitialLandscape()
 finalLandscape <- allData$landscape
 birdModel <- allData$birdResults
