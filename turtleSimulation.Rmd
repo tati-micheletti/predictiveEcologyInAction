@@ -1,7 +1,7 @@
 ---
 title: "Simulating Turtle Movements"
 author: "Tati Micheletti"
-date: "29 June 2025"
+date: "29 March 2026"
 output: pdf_document
 ---
 
@@ -162,13 +162,9 @@ will need to provide which habitat is available in each direction of the
 
 ```{r patch}
 simulatePatchChoice(N = "F",
-                    NE = "F",
                     E = "C",
-                    SE = "A",
                     S = "A",
-                    SW = "H",
-                    W = "C",
-                    NW = "B")
+                    W = "C")
 ```
 
 Please note that this code above is just an example! You will need to fill the arguments 
@@ -178,13 +174,9 @@ Note that if a direction is not available (end of board), you just have to repea
 the direction where the turtle came from as below:
 
 - If N is not available, use the same as S
-- If NE is not available, use the same as SW
 - If E is not available, use the same as W
-- If SE is not available, use the same as NW
 - If S is not available, use the same as N
-- If SW is not available, use the same as NE
 - If W is not available, use the same as E
-- If NW is not available, use the same as SE
 
 If the turtle lands in a *corner patch*, just simulate a new direction and 
 distance.  

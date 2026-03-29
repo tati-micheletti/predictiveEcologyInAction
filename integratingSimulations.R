@@ -7,13 +7,25 @@ invisible(checkPath("data/", create = TRUE))
 
 getAllData <- function(googleFolder = NULL){
   if (is.null(googleFolder)){
-    googleFolder <- "1C8s1O_PKVz1wwWg9dh_qppTmG2_hRUoi"
-  } 
+    googleFolder <- "1X5vCgxLnoRwXDRWEsyHZ4ip-CO18KjBx"
+  }
   allFls <- data.table(drive_ls(path = as_id(googleFolder)))
+  if (any(duplicated(allFls$name))){
+    unq <- which(!duplicated(allFls$name))
+    allFls <- allFls[unq, ]
+  }
+  if (!"turtleResults.rds" %in% allFls$name) 
+    stop(paste0("turtleResults are not available in Google Drive"))
+  if (!"landscapeResults.tif" %in% allFls$name) 
+    stop(paste0("landscapeResults are not available in Google Drive"))
+  if (!"birdResults.rds" %in% allFls$name) 
+    stop(paste0("birdResults are not available in Google Drive"))
+  
   landscape <- prepInputs(url = paste0("https://drive.google.com/file/d/",
                                        allFls[name == "landscapeResults.tif", id]),
                           targetFile = "landscapeResults.tif", 
-                          destinationPath = checkPath(file.path(getwd(), "results"), create = TRUE))
+                          destinationPath = checkPath(file.path(getwd(), "results"), create = TRUE), 
+                          overwrite = TRUE)
   coltab(landscape) <- data.frame(value = 1:6, 
                                   col = c("darkgreen","forestgreen","yellowgreen",
                                           "bisque", "grey30", "deepskyblue"))
@@ -26,12 +38,14 @@ getAllData <- function(googleFolder = NULL){
                                          allFls[name == "birdResults.rds", id]),
                             targetFile = "birdResults.rds", 
                             destinationPath = checkPath(file.path(getwd(), "results"), create = TRUE),
-                            fun = "readRDS")
+                            fun = "readRDS", 
+                            overwrite = TRUE)
   turtleResults <- prepInputs(url = paste0("https://drive.google.com/file/d/",
                                          allFls[name == "turtleResults.rds", id]),
                             targetFile = "turtleResults.rds", 
                             destinationPath = checkPath(file.path(getwd(), "results"), create = TRUE),
-                            fun = "readRDS")
+                            fun = "readRDS", 
+                            overwrite = TRUE)
   return(list(landscape = landscape,
               birdResults = birdResults,
               turtleResults = turtleResults))
@@ -150,4 +164,10 @@ areBirdsGoodUmbrellaForTurtle <- function(birdMaps, turtleMaps){
   return(p)
 }
 
-
+startGame <- function(){
+  suppressMessages(startOverBirds())
+  suppressMessages(startOverLandscape())
+  suppressMessages(startOverTurtle())
+  unlink(x = file.path(getwd(), "results"), recursive = TRUE, force = TRUE)
+}
+  

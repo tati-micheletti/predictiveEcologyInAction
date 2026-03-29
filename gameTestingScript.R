@@ -1,7 +1,7 @@
 # Quick script sourcing
 
 # Google folder: 
-ggfold <- "1X5vCgxLnoRwXDRWEsyHZ4ip-CO18KjBx"
+ggfold <- "1X5vCgxLnoRwXDRWEsyHZ4ip-CO18KjBx" # Use the ID of a google folder you own
 
 # ALL LIBRARIES
 # Dependencies
@@ -24,6 +24,12 @@ source("turtleSimulation.R")
 source("birdSimulation.R")
 source("integratingSimulations.R")
 
+# Making sure to start from scratch
+startGame()
+
+# Authorize Google
+googledrive::drive_auth(email = "tati.micheletti@gmail.com") # TO PREAUTHORIZE, USE YOUR EMAIL
+
 # LANDSCAPE
 landscape <- getInitialLandscape()
 for (round in 2:10){
@@ -43,9 +49,9 @@ availableHabitatsBirds()
 birdsTable <- generateBirdsTable() # Instead of the loadBirdsTable() manually made
 bt <- calculateObservations(birdsTable)
 # birdDataset <- fread("data/birdHabitat.csv")
-birdDataset <- cbind(data.table(birdsTable), 
+birdDataset <- cbind(data.table(birdsTable),
                      counts = bt[["counts"]]) # instead of "data/birdHabitat.csv" manually filled
-birdModel <- glm(formula = counts ~ A + B + C + D + E, 
+birdModel <- glm(formula = counts ~ A + B + C + D + E,
                  family = "poisson", data = birdDataset)
 saveBirdResults(birdModel, upload = ggfold)
 
@@ -53,14 +59,7 @@ saveBirdResults(birdModel, upload = ggfold)
 # simulateDirection() # Not needed to test
 # simulateDistance() # Not needed to test
 # availableHabitats() # Not needed to test
-# simulatePatchChoice(simulatePatchChoice(N = "A",
-#                                         NE = "A",
-#                                         E = "B",
-#                                         SE = "A",
-#                                         S = "A",
-#                                         SW = "H",
-#                                         W = "C",
-#                                         NW = "B")) # insted of the simulatePatchChoice()
+# simulatePatchChoice(N = "A", E = "B", S = "A", W = "C"))
 # turtleDataset <- fread("data/turtleArrivals.csv")
 turtleDataset <- generateTurtleDataset() # instead of all simulations + loading data/turtleArrivals manually
 turtleModel <- lm(formula = totalNumberOfArrivals ~ habitatType, 
@@ -74,6 +73,7 @@ saveTurtleResults(turtleResults, upload = ggfold)
 
 # INTEGRATING
 allData <- getAllData(googleFolder = ggfold)
+
 initialLandscape <- getInitialLandscape()
 finalLandscape <- allData$landscape
 birdModel <- allData$birdResults

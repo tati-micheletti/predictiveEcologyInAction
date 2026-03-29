@@ -116,6 +116,6 @@ startOverBirds <- function(){
   write.csv(bh, file = file.path(getwd(), "data/birdHabitat.csv"), row.names = FALSE)
   # 4. Delete the file birdResults.rds
   unlink(x = file.path(getwd(), "data", "birdResults.rds"))
-  print("Ready for another round?")
+  message("Ready for another round?")
 }
 

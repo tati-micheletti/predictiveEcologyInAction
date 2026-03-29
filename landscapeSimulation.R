@@ -321,7 +321,7 @@ saveLandscapeResults <- function(landscape, upload = NULL){
 startOverLandscape <- function(){
   unlink(x = file.path(getwd(), "data", "landscapeSimulationThroughTime.csv"))
   unlink(x = file.path(getwd(), "data", "landscapeResults.*"))
-  print("Ready for another round?")
+  message("Ready for another round?")
 }
 
 print("All functions were correctly sourced! You are ready to start.") 

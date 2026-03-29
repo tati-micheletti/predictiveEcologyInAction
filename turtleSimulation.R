@@ -46,7 +46,7 @@ ta <- structure(list(round = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
 write.csv(ta, file = file.path(getwd(), "data/turtleArrivals.csv"), row.names = FALSE)
 
 simulateDirection <- function(){
-  direction <- sample(c("N", "NE", "E", "SE", "S", "SW", "W", "NW"), 
+  direction <- sample(c("N", "E", "S", "W"), 
                       size = 1, replace = FALSE)
   print(paste0("The turtle will travel ", direction, " to look for a ",
                "good place to spend the year."))
@@ -90,21 +90,17 @@ availableHabitatsTurtles <- function(){
 }
 
 simulatePatchChoice <- function(N,
-                                NE,
                                 E,
-                                SE,
                                 S,
-                                SW,
-                                W,
-                                NW){
+                                W){
   
   defaultProbs <- data.table(
     habitatType = c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
     habitatProb = c(0.24, 0.19, 0.16, 0.13, 0.11, 0.09, 0.05, 0.02, 0.01)
     )
   
-  availableHabs <- data.table(habitatType = c(N,NE,E,SE,S,SW,W,NW),
-                              direction = c("N","NE","E","SE","S","SW","W","NW"))
+  availableHabs <- data.table(habitatType = c(N,E,S,W),
+                              direction = c("N","E","S","W"))
   
   DT <- merge(availableHabs, defaultProbs, all.x = TRUE, by = "habitatType")
   
@@ -148,7 +144,7 @@ simulatePatchChoiceSimple <- function(habitatTypeRandom){
   )
   
   availableHabs <- data.table(habitatType = habitatTypeRandom,
-                              direction = c("N","NE","E","SE","S","SW","W","NW"))
+                              direction = c("N","E","S","W"))
   
   DT <- merge(availableHabs, defaultProbs, all.x = TRUE, by = "habitatType")
   
@@ -218,5 +214,5 @@ startOverTurtle <- function(){
                   class = c("data.table", "data.frame"))
   write.csv(ta, file = file.path(getwd(), "data/turtleArrivals.csv"), row.names = FALSE)
   unlink("data/turtleResults.rds")
-  print("Ready for another round?")
+  message("Ready for another round?")
 }
