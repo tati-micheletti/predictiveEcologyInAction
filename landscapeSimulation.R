@@ -15,7 +15,7 @@ colorsInitial <- c(
   2, rep(1, times = 4), 2, rep(4, times = 2), 2, 3, # Row 3
   2, rep(1, times = 4), 2, rep(5, times = 2), 2, 3, # Row 4
   2, rep(1, times = 4), rep(2, times = 3), 6, 3, # Row 5
-  5, 2, rep(3, times = 4), rep(2, times = 2), 6, 2, # Row 6
+  5, 2, rep(3, times = 4), rep(2, times = 1), 6, 6, 2, # Row 6
   5, 2, rep(3, times = 4), 2, rep(6, times = 2), 4, # Row 7
   5, 2, rep(3, times = 4), rep(6, times = 2), rep(2, times = 2), # Row 8
   rep(4, times = 2), 2, 5, rep(2, times = 2), rep(6, times = 2), rep(2, times = 2), # Row 9

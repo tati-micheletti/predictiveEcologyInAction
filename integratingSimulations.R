@@ -62,15 +62,14 @@ generateBirdMaps <- function(initialLandscape, finalLandscape, birdModel){
                              B = 0,
                              C = 0,
                              D = 0,
-                             E = 0,
-                             F = 0
+                             E = 0
                            )
-                           for (L in LETTERS[1:6])
+                           for (L in LETTERS[1:5])
                              DT[pix == L, eval(L) := 1]
                            DT[, pix := NULL]
                            predIL <- suppressWarnings(predict(birdModel, newdata = DT))
                            birdMap <- rast(lands)
-                           values(birdMap) <- predIL
+                           values(birdMap) <- predIL*-1
                            return(birdMap)
                          }))
   names(birdMaps) <- c("Now", "Future")
